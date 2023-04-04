@@ -1,0 +1,91 @@
+<div class="navbar-container">
+    <nav class="nav-body">
+       <div>
+        <h2 class="logo">JMD</h2>
+        
+        </div>
+        <form action="{% url 'dashboard' %}" method="get" class="search-form">
+            <span><a href="/dashboard" style="text-decoration: none;"><div id="home">&#8962;</div> <div id="home_div">Home</div></a></span>
+            <input type="text" name="search_query" placeholder="Search quizzes..." class="search-field">
+            <button type="submit" class="btn" style="background-color: #39398f;color: white;">Search</button>
+          </form>
+        <a href="/logout"><button class="btn" type="button" style="background-color: #39398f; margin-bottom: 10px; color: white;">Logout</button></a>
+
+
+    </nav>
+   
+  
+  
+</div>
+<style>
+    #home
+    {
+        font-size:40px;
+        margin: -22px 16px 0 0px;
+        padding: 0;
+        color: white;
+    }
+    #home_div
+    {
+        margin:-14px 0 0 -11px;
+         color: white
+    }
+    
+    .navbar-container
+    {
+    width:100%;
+    background-color: #5c5ce9; 
+    
+
+    }
+    .nav-body
+    {
+        display:flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1% 2% 0 2%;
+    }
+
+    .nav-body ul li
+    {
+        list-style-type:none ;
+        display: inline-block;
+        padding: 3px 10px;  
+        margin-bottom: -10px;
+    }
+    .nav-body ul li a
+    { 
+        color: white;
+        text-decoration: none;
+    }
+    
+
+    .nav-body ul li:hover  
+    {
+        
+        border-bottom: 2px solid black; /* adjust these values to change the thickness and color of the underline */
+        border-bottom-width: 3px; 
+     
+    }
+.search-form {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.search-field {
+  padding: 7px;
+  border: 2px solid #ccc;
+  border-radius:10px;
+  font-size: 16px;
+  width: 400px;
+  margin-right: 10px;
+
+}
+
+
+
+    
+
+
+</style>

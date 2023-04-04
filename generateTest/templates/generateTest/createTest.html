@@ -1,0 +1,294 @@
+{%extends 'generateTest/base.html' %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block content%}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var question_no = {{no_of_ques}};
+        $(document).ready(function() {
+            var questionCount;
+            {% if not QA%}
+            questionCount=question_no+2;
+            
+            {%else%}
+            questionCount=question_no+1;
+
+            {%endif%}
+
+            // Add a new question
+            $('#add-question-btn').click(function() {
+                var questionHtml = `
+                <div class="question no_${questionCount-1}">
+                <b class="delete-button" onclick="removeMyDiv(${questionCount-1})" style=" float: right; font-size: 1.2em; background: none; border: none;color: red; cursor:pointer">&#x2715;</b>
+            <h3>Question ${questionCount}</h3>
+                        <div class="row">
+                    <div class="col-8">
+                    <input type='hidden' name="question_number[]" value=${questionCount}>
+                    <input type="text" class="form-control" name="question[]" placeholder="Enter your question">
+                    </div>
+                    <div class="col-4">
+                    <input type="text" class="form-control col-4" name="marks[]" placeholder="Enter question marks">
+                     </div>
+                    </div>
+                    <br>
+                    <div class="option-box">
+                    <div class="options " id="ques_no_${questionCount}">
+                                                    
+                    </div>
+                    <p id="right">Add Options</p> 
+                    <button type="button" data-quesNo="${questionCount}" class="add-option-btn btn btn-primary">Add option</button>
+                    </div>
+                    <hr style="color:rgb(4, 118, 133); height:4px;">
+                    </div>
+                `;
+                $('#questions-container').append(questionHtml);                
+                
+                questionCount++;
+            });
+
+            // Add a new option to a question
+            $('#questions-container').on('click', '.add-option-btn', function() {
+                console.log('questionCount:', questionCount);
+                var qNo = $(this).attr('data-quesNo');
+                console.log(qNo)
+                var option_div=$('#ques_no_'+qNo)
+                var questionIndex = $('.add-option-btn').index(this); 
+                var optionIndex = option_div.find('input[type="text"]').length;
+                var optionHtml = `
+                <div class="row del_opt_${optionIndex+1}${qNo}">
+                    <div class="col-1 " style="margin-right:-40px !important; " ><input type="checkbox" class="form-check-input check" name="question_${qNo}_correct_[]" value="${optionIndex}"></div>
+                    <div class="col-6 mb-1" > <input type="text" class="form-control " name="question_${qNo}_option_[]" placeholder="Option ${optionIndex+1}"></div>
+                    <div class="col-1 "><b class="delete-button" onclick="removeOpt(${optionIndex+1},${qNo})" style="font-size: 1.2em; background: none; border: none;color: red; cursor:pointer">&#x2715;</b></div>
+                <div>
+                `;
+                // $('.options:eq(' + originalIndex + ')').append(optionHtml);
+                option_div.append(optionHtml);
+                
+                $('#right').replaceWith(`<p>Select the option</p>`);
+                
+            });
+            $('#questions-container').on('click', '.edit_add-option-btn', function() {
+                // var questionIndex = $('.edit_add-option-btn').index(this);
+                var questionIndex = $(this).attr('data-quesNo');
+                console.log(questionIndex)
+                var option_div=$('#ques_no_'+questionIndex)
+                var optionIndex = option_div.find('input[type="text"]').length;
+                var optionHtml = `
+                <div class="row del_opt_${optionIndex+1}${questionIndex}">
+                    <div class="col-1 " style="margin-right:-40px !important; " ><input type="checkbox" class="form-check-input check" name="edit_question_${questionIndex}_correct_[]" value="${optionIndex}"></div>
+                    <div class="col-6 mb-1" > <input type="text" class="form-control" name="edit_question_${questionIndex}_option_[]" placeholder="Option ${optionIndex+1}"></div>
+                    <div class="col-1 "><b class="delete-button" onclick="removeOpt(${optionIndex+1},${questionIndex})" style="font-size: 1.2em; background: none; border: none;color: red; cursor:pointer">&#x2715;</b></div>
+               
+                <div>
+                `;
+                option_div.append(optionHtml);
+                $('#edit_right').replaceWith(`<p>Select the correct option</p>`);
+                
+            });
+
+        });
+    
+   function removeMyDiv(q_no) {
+    const myDiv = document.querySelector('.no_' + q_no);
+    myDiv.remove(); // Remove the question element from the DOM
+    
+    }
+    function removeOpt(o_no,q_no) {
+    const myDiv = document.querySelector('.del_opt_' + o_no + q_no);
+    myDiv.remove(); // Remove the question element from the DOM
+    
+    }
+    
+    // <!-- ---Image---- -->
+
+//     function uploadImage() {
+//     const fileInput = document.querySelector('#image');
+//     const preview = document.querySelector('#image-preview');
+    
+//     const file = fileInput.files[0];
+//     const formData = new FormData();
+//     formData.append('image', file);
+
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('POST', '/upload-image/', true);
+//     xhr.onload = function() {
+//         if (xhr.status === 200) {
+//             preview.innerHTML = `<img src="${xhr.responseText}" alt="Image Preview">`;
+//         } else {
+//             console.error('Image upload failed.');
+//         }
+//     };
+//     xhr.send(formData);
+// }
+
+    // <!-- ---Image---- -->
+
+
+
+
+    </script>
+
+    {% include "generateTest/quizNav.html" %}
+    <div class="container mt-3 mb-5" >
+    <form method="post">
+        {% csrf_token %}
+        <div class="box">
+        <div class="row">
+        <div class="col-7">
+        <label for="title" class="form-label">Title</label>       
+        <input name="title" class="form-control" placeholder="Enter Quiz title" value="{{quiz.name}}" required>
+        
+        </div>
+        
+        <div class="form-group" style="width: 35%;">
+            
+            <label class="form-label" for="duration">Duration:</label>
+            <div class="input-group">
+                
+              <input type="number" class="form-control" id="hours" name="Hrs" min="0" max="24" required placeholder="Hrs" value="{{hrs}}">
+              <span class="input-group-text">:</span>            
+              <input type="number" class="form-control" id="minutes" name="Mins" min="0" max="59" required placeholder="Mins" value="{{min}}">
+              <span class="input-group-text">:</span>
+              <input type="number" class="form-control" id="seconds" name="Secs" min="0" max="59" required placeholder="Secs" value="{{sec}}">
+            </div>
+          
+        </div>
+       </div>
+       </div>
+
+        <div class="box">        
+        <label for="description" class="form-label">Description:</label>       
+        <textarea name="summary" class="form-control"  id="description">{{quiz.summary}}</textarea>
+        </div>
+        
+        
+        <div class="box">   
+        <div id="questions-container">
+            {% if not QA %}
+            <div class="question no_0">
+                <b class="delete-button" onclick="removeMyDiv(0)" style=" float: right; font-size: 1.2em; background: none; border: none;color: red; cursor:pointer">&#x2715;</b>
+                <h3>Question 1</h3>
+                <div class="row">
+            <div class="col-8">
+            <input type='hidden' name="question_number[]" value=1>
+            <input type="text" class="form-control" name="question[]" placeholder="Enter your question" required>
+            </div>
+            <div class="col-4">
+            <input type="text" class="form-control col-4" name="marks[]" placeholder="Enter question marks" value="0" required>
+             </div>
+             <!-- ---Image---- -->
+             <!-- <div class="form-group">
+                <label for="image">Upload Image:</label>
+                <input type="file" name="image" id="image">
+                <div id="image-preview"></div>
+            </div> -->
+             <!-- ---Image---- -->
+            </div>
+            <br>
+            <div class="option-box ">
+            <div class="options" id="ques_no_1">
+                                            
+            </div>
+            <p id="right">Add Options</p> 
+            <button type="button" data-quesNo="1" class="add-option-btn btn btn-primary">Add option</button>
+            </div>
+            <hr style="color:rgb(4, 118, 133); height:4px;">
+             </div>
+            {% else %}
+            {% for i in QA%}
+             {% with q_no=forloop.counter0 %} 
+            <div class="question no_{{q_no}}"> 
+                <b class="delete-button" onclick="removeMyDiv({{q_no}})" style=" float: right; font-size: 1.2em; background: none; border: none;color: red;cursor:pointer">&#x2715;</b>
+            
+             <h3>Question {{forloop.counter}}</h3>
+             <div class="row">
+         <div class="col-8">
+            <input type='hidden' name="edit_question_number[]" value="{{q_no}}">
+            <input type="hidden" name="edit_qid[]" value="{{i.question.id}}">
+            <label for="question" class="form-label">Question:</label>
+         <input type="text" class="form-control" name="edit_question[]" placeholder="Enter your question" value="{{i.question.name}}">
+         
+        </div>
+         <div class="col-4">
+            <label for="marks" class="form-label">Marks:</label>
+         <input type="text" class="form-control col-4" name="edit_marks[]" placeholder="Enter question marks" value="{{i.question.marks}}">
+          </div>
+         </div>
+         <br>
+         <div class="option-box">
+         <div class="options" id="ques_no_{{q_no}}">
+             {% for a in i.answers %}
+             {% with a_no=forloop.counter %}
+              <div class="row del_opt_{{a_no}}{{q_no}}">
+                 <input type="hidden" name="edit_question_{{q_no}}_optionid_[]" value="{{a.id}}">
+                 <div class="col-1 " style="margin-right:-40px !important; " ><input type="checkbox" class="form-check-input check" name="edit_question_{{q_no}}_correct_[]" value="{{a.id}}" {% if a.is_correct %} checked {%endif%}></div>
+                 <div class="col-6 mb-1" > <input type="text" class="form-control" name="edit_question_{{q_no}}_option_[]"  value="{{a.name}}" > </div> 
+                 <div class="col-1 "><b class="delete-button" onclick="removeOpt({{a_no}},{{q_no}})" style="font-size: 1.2em; background: none; border: none;color: red; cursor:pointer">&#x2715;</b></div>
+                </div>
+                
+             {% endwith %}
+             {% endfor %}
+            
+         </div>
+         <p id="edit_right">Add Options</p> 
+         <button type="button" data-quesNo="{{q_no}}" class="edit_add-option-btn btn btn-primary">Add option</button>
+         {% endwith %}
+        </div>
+         <hr style="color:rgb(4, 118, 133); height:4px;">
+         </div>
+ 
+         {% endfor %}
+
+            {% endif %}
+            
+         
+          
+
+        </div>
+        <button type="button" id="add-question-btn" class="btn btn-primary">Add question</button>
+        <br><br>
+        <button type="submit" class=" btn btn-primary">Submit</button>
+        </div>
+
+    </form>
+</div>
+
+<style>
+body
+{
+    background-image: linear-gradient(to left bottom, #4b4baf, #4e4eba, #5152c4, #5555cf, #5858da, #456ce9, #2d7ef5, #008fff, #00acff, #00c2f2, #00d3d1, #3ee0ae);
+}
+    .option-box
+{
+    margin-left:2rem;
+    margin-bottom: 1rem;
+}
+
+input, textarea
+{
+    word-wrap: break-word !important;
+    border-color: rgb(133, 131, 131) !important;
+}
+.box
+{
+    margin-bottom: 0.5rem;
+    background-color: white;
+    border-radius: 10px;
+    padding: 1rem;
+}
+.check
+{
+   
+   height:1.3em !important;
+   width: 1.3em !important;
+   vertical-align: middle !important;
+}
+.container
+{
+    width: 70%;
+    border-radius: 10px;
+    
+}
+</style>
+{% endblock%}

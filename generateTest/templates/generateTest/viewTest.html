@@ -1,0 +1,168 @@
+{%extends 'generateTest/base.html' %}
+{% block content%}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var questionCount = {{no_of_ques}};
+
+            // Add a new question
+            $('#add-question-btn').click(function() {
+                var questionHtml = `
+                    <div class="question">
+                        <h3>Question ${questionCount}</h3>
+                        <div class="row">
+                    <div class="col-8">
+                    <input type="text" class="form-control" name="question[]" placeholder="Enter your question">
+                    </div>
+                    <div class="col-4">
+                    <input type="text" class="form-control col-4" name="marks[]" placeholder="Enter question marks">
+                     </div>
+                    </div>
+                    <br>
+                    <div class="option-box">
+                    <div class="options">
+                                                    
+                    </div>
+                    <p id="right">Add Options</p> 
+                    <button type="button" class="add-option-btn btn btn-primary">Add option</button>
+                    </div>
+                    <hr style="color:rgb(4, 118, 133); height:4px;">
+                `;
+                $('#questions-container').append(questionHtml);                
+                
+                questionCount++;
+            });
+
+            // Add a new option to a question
+            $('#questions-container').on('click', '.add-option-btn', function() {
+                var questionIndex = $('.add-option-btn').index(this);
+                var optionIndex = $('.options:eq(' + questionIndex + ') input[type="text"]').length;
+                var optionHtml = `
+                <div class="row">
+                    <div class="col-1 " style="margin-right:-40px !important; " ><input type="checkbox" class="form-check-input check" name="question_${questionIndex}_correct_[]" value="${optionIndex}"></div>
+                    <div class="col-6 mb-1" > <input type="text" class="form-control" name="question_${questionIndex}_option_[]" placeholder="Option ${optionIndex+1}"></div>
+                <div>
+                `;
+                $('.options:eq(' + questionIndex + ')').append(optionHtml);
+                $('#right').replaceWith(`<p>Select the correct option</p>`);
+                
+            });
+
+        });
+    </script>
+
+    <h1>Create a Google Form Clone</h1>
+
+    <div class="container mt-3 mb-5" >
+    <form method="post">
+        {% csrf_token %}
+        <div class="box">
+        <div class="row">
+        <div class="col-7">
+        
+        <label for="title" class="form-label">Title:</label>    
+        <input type="text" class="form-control" name="title" id="title" placeholder="Enter the title of the quiz" value="{{quiz.name}}"></div>
+        
+        
+        <div class="form-group" style="width: 35%;">
+            <label class="form-label" for="duration">Duration:</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="hours" name="hours" min="0" max="24" required placeholder="Hrs" value="6">
+              <span class="input-group-text">:</span>            
+              <input type="number" class="form-control" id="minutes" name="minutes" min="0" max="59" required placeholder="Mins">
+              <span class="input-group-text">:</span>
+              <input type="number" class="form-control" id="seconds" name="seconds" min="0" max="59" required placeholder="Secs">
+            </div>
+          
+        </div>
+       </div>
+       </div>
+
+       {% else %}
+            
+               
+       
+          <div class="box">   
+            <div id="questions-container">
+             {% for i in QA%}
+             <div class="question">
+              {% with q_no=forloop.counter %}
+              <h3>Question {{q_no}}</h3>
+              <div class="row">
+          <div class="col-8">
+          <input type="text" class="form-control" name="edit_question[]" placeholder="Enter your question" value="{{i.question.name}}">
+          </div>
+          <div class="col-4">
+          <input type="text" class="form-control col-4" name="edit_marks[]" placeholder="Enter question marks" value="{{i.question.marks}}">
+           </div>
+          </div>
+          <br>
+          <div class="option-box">
+          <div class="options">
+              {% for a in i.answers %}
+              {% with a_no=forloop.counter %}
+              <div class="row">
+                  <div class="col-1 " style="margin-right:-40px !important; " ><input type="checkbox" class="form-check-input check" name="edit_question_{{q_no}}_correct_[]" value="{{a_no}}"></div>
+                  <div class="col-6 mb-1" > <input type="text" class="form-control" name="edit_question_{{q_no}}_option_[]"  value="{{a.name}}"></div>
+              </div> 
+              {% endwith %}
+              {% endfor %}
+             
+              {% endwith %}
+                                          
+          </div>
+          <p id="right">Add Options</p> 
+          <button type="button" class="add-option-btn btn btn-primary">Add option</button>
+          </div>
+          <hr style="color:rgb(4, 118, 133); height:4px;">
+  
+          {% endfor %}
+            </div>
+           </div>
+        </div>    
+        <button type="button" id="add-question-btn" class="btn btn-primary">Add question</button>
+            <br><br>
+            <button type="submit" class=" btn btn-primary">Submit</button>
+        
+
+    </form>
+     </div>
+
+<style>
+body
+{
+    background-color: rgb(202, 244, 250) ;
+}
+.option-box
+{
+    margin-left:2rem;
+    margin-bottom: 1rem;
+}
+
+input, textarea
+{
+    border-color: rgb(133, 131, 131) !important;
+}
+.box
+{
+    margin-bottom: 0.5rem;
+    background-color: white;
+    border-radius: 10px;
+    padding: 1rem;
+}
+.check
+{
+   
+   height:1.3em !important;
+   width: 1.3em !important;
+   vertical-align: middle !important;
+}
+.container
+{
+    width: 70%;
+    border-radius: 10px;
+    
+}
+</style>
+{% endblock%}

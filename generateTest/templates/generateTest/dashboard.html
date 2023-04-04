@@ -1,0 +1,177 @@
+{%extends 'generateTest/base.html' %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block content%}
+
+  
+  {% include "generateTest/dashNav.html" %}
+
+ <div class="container mt-3 mb-5">
+      
+      <div class="row">
+        <div class="col-md-2">
+        <div class="card border-primary mt-3 " id="addbtn">
+          <div class="card-body text-primary mt-3" style="text-align: center;"> 
+              <button type="button" style="border-style:none; background-color: transparent;" onclick="window.location.href='/createTest'">
+                  <svg xmlns="http://www.w3.org/2000/svg"  id="plus" width="73" height="73" fill="#5c5ce9" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+                     </svg>      
+                 </button>
+                   
+            <h5 class="card-title" style="margin-top:0.5rem;">Create Quiz</h5>
+            </div>
+        </div>
+      </div>
+      
+          
+        {% for quiz in quizzes %}
+    <div class="col-md-2"  >
+    <a href="/edit/{{ quiz.id }}" >
+      
+      <div class="card border-primary mt-3">
+        <b class="delete-button h" onclick="window.location.href='/del/{{quiz.id}}'" style=" margin:0 5px -18px auto; font-size: 1.2em; background: none; border: none;color: red; cursor:pointer">&#x2715;</b>
+         
+        <div class="card-body text-primary mt-3" style="text-align: center;">    
+                             
+          <h5 class="card-title">{{ quiz.name }}</h5>
+          {% if quiz.summary %}
+              <p class="card-text">{{ quiz.summary }}</p>
+          {% else %}
+              <p class="card-text">----</p>
+
+          {% endif %}
+              
+               <button class="btn h" id="my-button" type="button" style="background-color: #5c5ce9; margin-bottom: 10px; color: white;" data-bs-toggle="modal" data-bs-target="#exampleModal_{{quiz.id}}">Send</button>
+                
+              </div>
+              
+          <div class="card-footer bg-transparent border-dark" style="font-size: smaller; " ><span style="font-weight:600">Created on</span>: {{quiz.created_at}}</div>
+      </div>
+    </a> 
+    </div>
+    <div class="modal fade" id="exampleModal_{{quiz.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="exampleModalLabel">Share Link</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            
+          </div>
+          <div class="modal-body">
+            <div class="share">
+              <p id="link_{{quiz.id}}" class="link">{{link}}{{quiz.id}}</p>
+              <button id="copy_btn" onclick="copyContent({{quiz.id}})"> 
+                  <span class="copy-icon">Copy</span>
+                  <b class="tick-icon" style="color: white !important;"> &#10003;&#xFE0E;</b>
+              </button>            
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+        {% endfor %}
+        
+  </div>
+  </div>
+  
+<style>
+  body{
+    background-color: rgb(247, 247,  247);
+  }
+.col-md-2 
+{
+    width:20% !important;   
+   
+    color:#5c5ce9 ;
+}
+.col-md-2 a{text-decoration: none;}
+.card {
+    
+    height: 94%;
+    border:2px solid white !important;
+    box-shadow: 2px 5px 13px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    color:#5c5ce9 ;
+    
+}
+.card:hover{
+    border: 2px solid #5c5ce9 !important;
+    
+}
+.card-body {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom:-15px;  
+  color:#5c5ce9 !important;
+}
+
+.card-title,.card-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.share
+    {
+        display: flex;
+        justify-content: space-between;
+        border:1px solid gray  ;
+        border-radius: 10px;
+    }
+
+    .share button
+    {
+        border-radius: 10px;
+        border: none;
+        background-color: #5c5ce9;
+        color: white;
+        width:50px;
+    }
+
+
+    .copy-icon
+    {
+        display: inline-block;
+    }
+   .tick-icon {
+    
+    display: none;
+  }
+.link
+{
+    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+</style>
+<script>
+ var send = document.querySelectorAll('.h');
+for (var i = 0; i < send.length; i++) {
+  send[i].addEventListener('click', function(event) {
+    event.preventDefault();
+    // Your code here
+  });
+}
+function copyContent(quiz_id) {
+      // Get the element containing the content you want to copy
+      var content = document.getElementById("link_"+quiz_id);
+      console.log(content)
+    
+      // Copy the content to the clipboard
+      navigator.clipboard.writeText(content.innerText);
+      var tickIcon = document.querySelectorAll(".tick-icon");
+      var copyText = document.querySelectorAll(".copy-icon");
+     for(var i=0;i<tickIcon.length;i++)
+      {tickIcon[i].style.display = "inline-block";
+     copyText[i].style.display = "none";
+    }
+    setTimeout(function() {
+    for (var i=0; i<tickIcon.length; i++) {
+      tickIcon[i].style.display = "none";
+      copyText[i].style.display = "inline-block";
+
+    }
+  }, 2000);
+  }
+</script>
+{% endblock %}

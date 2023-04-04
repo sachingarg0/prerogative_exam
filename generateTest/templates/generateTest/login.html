@@ -1,0 +1,43 @@
+{% extends 'generateTest/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load widget_tweaks %}
+{%block content%}
+
+<div class="container mt-7" style="width: 40%; font-size: 14px;">
+
+<form method="POST" class="card p-3 mt-5 needs-validation" novalidate>
+    {%csrf_token%}
+   <h2 style="text-align:center">JMD</h2>
+    <h3 style="color:#342a4e; text-align:center">Login</h3>
+    
+    <h6 style="color:#342a4e; text-align:center">Welcome Back !</h6>
+    <hr>
+    {% csrf_token %}
+
+    {{ form|crispy }}     
+    
+    
+    <input type="submit" style="border:none;"class="btn submit_btn btn-primary mb-2" name="submit" , value='Submit'></form> 
+</div>
+<style>
+    body {
+    background: url("{%static 'generateTest/loginbg.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    background-color: rgba(105, 29, 105, 0.377);
+    background-blend-mode: lighten;
+    }
+    .card
+  {
+    background-color: rgb(245, 245, 245);
+  }
+  .submit_btn
+  {
+    background-color:#342a4e;
+    color: white;
+    width: 20%;
+    height:40px;
+    border-radius: 10px;
+  }
+</style>
+{%endblock%}

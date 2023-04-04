@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ test.name }} - Test Detail</title>
+</head>
+<body>
+	<h1>{{ test.name }}</h1>
+	<p><strong>Summary:</strong> {{ test.summary }}</p>
+	<p><strong>Duration:</strong> {{ test.duration }} minutes</p>
+	<form method="POST">
+    {% csrf_token %}
+
+	{% for qa in question_answers %}
+    
+		<h2>{{ qa.question.name }}</h2>
+		{% for answer in qa.answers %}
+			<label>
+				<input type="radio" name="{{ qa.question.id }}" value="{{ answer.id }}" />
+				{{ answer.name }}
+			</label>
+			<br>
+		{% endfor %}
+	{% endfor %}
+	<button type="submit" name="submit" , value='Submit'>Submit</button>
+</form>
+<h1>Score={{score}}</h1>
+    <h1>Correct= {{correct}}</h1>
+    <h1>Incorrect= {{incorrect}}</h1>
+    <h1>Unanswered={{unanswered}}</h1>
+</body>
+</html>

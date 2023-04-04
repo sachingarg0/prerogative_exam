@@ -1,0 +1,142 @@
+{% extends 'generateTest/base.html' %}
+{%block content%}
+
+{% include "generateTest/quizNav.html" %}
+
+ <div style="min-height:100vh">
+ <div class="container mt-3" style="border-radius: 5px; ">
+    <div class="box">
+      {% if total_responses != 0 %}
+      <a href="/downloadCSV/{{quiz.id}}" class="btn btn-primary" style="float: right;">Download CSV</a>
+     {%endif%}
+     
+      <h1>Resposes: {{total_responses}}</h1>
+      <form id="acceptForm" method="POST">
+        {% csrf_token %}
+      <input type="hidden" name="form" value="accept"/>
+      <div class="form-check form-switch" >
+        <label class="form-check-label" for="flexSwitchCheckChecked">Accepting Responses</label>
+        <input class="form-check-input switch" type="checkbox" name="acceptResponse" role="switch" id="acceptResponse" {% if quiz.accepting_response %}checked{% endif %}>
+      </div>
+      </form>
+
+      <form id="multiForm" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="multi"/>
+      <div class="form-check form-switch" >
+        <label class="form-check-label" for="flexSwitchCheckChecked">Multiple Responses</label>
+        <input class="form-check-input switch"  type="checkbox" name="multiResponse" role="switch" id="multiResponse" {% if quiz.mutli_response %}checked{% endif %}>
+      </div>
+    </form>
+     <hr color="#342a4e"  size="5px">
+    </div>
+    <div class="box overflow-x-scroll"> 
+    {% if total_responses == 0 %}
+    <h3>OOPS! No Responses Yet.</h3>
+    {% else %}
+    <table class="table viewtable p-5" >
+    <thead>
+      <tr>
+        <!-- <th scope="col">#</th> -->
+        <th class="p-10" scope="col">Name</th>
+        <th scope="col">Father Name</th>
+        <th scope="col">Date Of Birth</th>
+        <th scope="col">Email</th>        
+        <th scope="col">Mobile Number</th>       
+        <th scope="col">Marks</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+        <tr>
+          <td>{{ student.name }}</td>
+          <td>{{ student.father_name }}</td>
+          <td>{{ student.dob}}</td>
+          <td>{{ student.email }}</td>
+          <td>{{ student.phone_number }}</td>             
+          <td>{{ student.marks}}</td>
+        </tr>
+      {% endfor %}
+      
+    </tbody>
+  </table> 
+    {% endif %}
+   
+  </div>
+
+{% if students.has_other_pages %}
+<nav aria-label="View" class="view" >
+  <ul class="pagination justify-content-center">
+    {% if students.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ students.previous_page_number }}">&laquo;</a>
+    </li>
+    {% endif %}
+    {% for num in students.paginator.page_range %}
+      {% if students.number == num %}
+      <li class="page-item active" aria-current="page">
+        <a class="page-link" href="#">{{ num }}</a>
+      </li>
+      {% else %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      </li>
+      {% endif %}
+    {% endfor %}
+    {% if students.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ students.next_page_number }}">&raquo;</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+</div>
+</div>
+
+<style>
+    body
+{
+    background-image: linear-gradient(to left bottom, #4b4baf, #4e4eba, #5152c4, #5555cf, #5858da, #456ce9, #2d7ef5, #008fff, #00acff, #00c2f2, #00d3d1, #3ee0ae);
+}
+.box
+{
+    margin-bottom: 0.5rem;
+    background-color: white;
+    border-radius: 10px;
+    padding: 1rem;
+}
+.switch
+{
+  border-color:#4e4eba;
+}
+.active .page-link
+{
+ background-color: #342a4e !important;
+ border-color:  #342a4e !important;
+ color:white !important;
+}  
+.pagination li a
+{
+    color:  #342a4e !important;
+}
+</style>
+
+<script>
+  
+     const acceptResponse = document.getElementById('acceptResponse');
+     const multiResponse=document.getElementById('multiResponse');
+
+      acceptResponse.addEventListener('click', () => {
+        
+        document.getElementById('acceptForm').submit();
+        
+      });
+      multiResponse.addEventListener('click', () => {
+        
+        document.getElementById('multiForm').submit();
+        
+      });
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'generateTest/base.html' %}
+{%block content%}
+<div class="container mt-5 mb-5" style="width:50%;">
+ <div class="box">
+    <h2>{{message}}</h2>
+	{% if message == "Sorry! We are no longer accepting any response"%}
+	<div class="contact mt-5">
+		<h1 style="color: rgb(130, 106, 251); text-decoration: underline;">Reach Us !</h1>
+		<div class="contact_label">Address </div>
+		<span>Civil City Road, Haibowal Kalan, Ludhiana, Punjab,INDIA 141001</span>
+		<div class="contact_label">Email </div>
+		<span><a href="mailto:info@example.com" style="text-decoration: none; color: black;">abc@gmail.com</a></span>
+		<div class="contact_label">Phone Number</div>
+		<span>+91132345678</span>
+
+		
+	</div>
+	{%endif%}
+    
+</div>
+</div>
+<style>
+    body
+	{
+		background: rgb(130, 106, 251);
+	}
+	.contact_label
+	{
+		font-size: 18px;
+		font-weight: 600;
+		margin-top: 1rem;
+	}
+    .box
+	{
+		background-color: white;
+		border-radius: 10px;
+		padding: 1rem;
+        text-align: center;
+	}
+</style>
+{%endblock%}

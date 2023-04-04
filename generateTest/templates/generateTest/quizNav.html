@@ -1,0 +1,141 @@
+<script>
+    function copyContent() {
+      // Get the element containing the content you want to copy
+      var content = document.getElementById("link");
+    
+      // Copy the content to the clipboard
+      navigator.clipboard.writeText(content.innerText);
+      var tickIcon = document.querySelector(".tick-icon");
+      var copyText = document.querySelector(".copy-icon");
+     tickIcon.style.display = "inline-block";
+     copyText.style.display = "none";
+     setTimeout(function() {
+    tickIcon.style.display = "none";
+    copyText.style.display = "inline-block";
+    },2000); 
+    }
+    
+    // Attach the copyContent function to the button click event
+</script>
+
+<div class="navbar-container">
+    <nav class="nav-body">
+       <div>
+        <h2 class="logo">JMD</h2>
+        
+        </div>
+        <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li {% if '/edit/' in request.path or '/createTest' in request.path %}class="on"{% endif %}><a href="/edit/{{quiz.id}}">Questions</a></li>
+            {% if  '/createTest' in request.path %}
+           </ul>
+             <div></div>
+            {% else %}
+            <li  {% if '/viewResponses/' in request.path %}class="on"{% endif %}><a href="/viewResponses/{{quiz.id}}">Responses</a></li>
+        </ul>
+        <button class="btn "type="button" style="background-color: #5c5ce9; margin-bottom: 10px; color: white;" data-bs-toggle="modal" data-bs-target="#exampleModal">Send</button>
+           {% endif %}  
+    </nav>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabel">Share Link</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          
+        </div>
+        <div class="modal-body">
+          <div class="share">
+            <p id="link">{{link}}</p>
+            <button id="copy_btn" onclick="copyContent()"> 
+                <span class="copy-icon">Copy</span>
+                <b class="tick-icon" style="color: white !important;"> &#10003;&#xFE0E;</b>
+            </button>            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<style>
+    .navbar-container
+    {
+    width:100%;
+    background-color: white; 
+    
+
+    }
+    .nav-body
+    {
+        display:flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1% 2% 0 2%;
+    }
+
+    .nav-body ul li
+    {
+        list-style-type:none ;
+        display: inline-block;
+        padding: 3px 10px;  
+        margin-bottom: -10px;
+    }
+    .nav-body ul li a
+    { color: black;
+        text-decoration: none;
+    }
+    .nav-body ul li a:hover
+    {color:#5c5ce9 ;}
+    
+    .on
+    {
+        border-bottom: 2px solid #5c5ce9; /* adjust these values to change the thickness and color of the underline */
+        border-bottom-width: 3px; 
+
+    }
+
+    .on a
+    {color:#5c5ce9 !important;}
+
+    .nav-body ul li:hover  
+    {
+        
+        border-bottom: 2px solid #5c5ce9; /* adjust these values to change the thickness and color of the underline */
+        border-bottom-width: 3px; 
+     
+    }
+    .share
+    {
+        display: flex;
+        justify-content: space-between;
+        border:1px solid gray  ;
+        border-radius: 10px;
+    }
+
+    .share button
+    {
+        border-radius: 10px;
+        border: none;
+        background-color: #5c5ce9;
+        color: white;
+        width:50px;
+    }
+
+
+    .copy-icon
+    {
+        display: inline-block;
+    }
+   .tick-icon {
+    
+    display: none;
+  }
+#link
+{
+    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+</style>

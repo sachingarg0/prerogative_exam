@@ -1,0 +1,441 @@
+{%extends 'generateTest/base.html' %}
+{% block content%}
+
+
+<div class="navbar-container">
+    <nav class="nav-body">
+       <div>
+        <h2 class="logo">JMD</h2>
+        
+        </div>
+        
+        
+    <p class="text-center time_box">Time remaining : <span id="timer">00:00:00</span></p>
+
+    </nav>
+   
+  
+  
+</div>
+<div class="quiz-container">
+    <h1 class="text-center">{{test.name}}</h1>
+    <p class="text-center">{{test.summary}}</p>
+    <hr>
+    <form method="post" id="quiz-form">
+        {% csrf_token %}
+		
+        <!-- <div id="questions-container"> -->
+            <div id="questions">
+            {% for qa in question_answers %}
+            <!-- <div class="question box">
+				<div class="question-wrapper">
+				<span style="font-size: 18.5px; font-weight: 600;">{{forloop.counter}}. </span>
+				<div class="question_text">
+					<p>{{qa.question.name}}</p>
+				</div>
+				<div class="marks">
+					<p>Marks: {{qa.question.marks}}</p>
+				</div>
+			</div>
+				
+             
+         
+         <br>
+         <div class="option-box">
+         <div class="options">
+             {% for a in qa.answers %}
+             
+             <div class="row">
+                
+                 <div class="col-1 " style="margin-right:-40px !important; " ><input type="radio" class="form-check-input check"name="{{ qa.question.id }}" value="{{ a.id }}"/></div>
+                 <div class="col-6 mb-1" > <input type="text" class="form-control" name="edit_question_{{q_no}}_option_[]"  value="{{ a.name }}"></div>
+             </div> 
+           
+             {% endfor %} -->
+
+             
+                <h4>Question {{forloop.counter}}</h4>
+                <p class="question_text">{{qa.question.name}}</p>
+                <ul class="option_group">
+                    {% for a in qa.answers %}
+                  <li>
+                    <label>
+                      <input type="radio" class="form-check-input check" name="{{ qa.question.id }}" value="{{ a.id }}"/>
+                      <span class="option_text">{{ a.name }}</span>
+                    </label>
+                  </li>
+                  {% endfor %}
+                </ul>
+                <br>
+                <br>
+
+              
+            
+                                         
+         
+         <!-- </div>
+         </div> -->
+ 
+         {% endfor %}
+        </div>
+		 <button type="submit" class="btn" style="background-color: #39398f;color: white;">Submit</button>
+		
+	</form>
+</div>
+<footer class="footer">
+    <div class="container">
+      <p>Copyright &copy; 2023 <b>JMD Technocrats</b>. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-body">
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<!-- Modal -->
+<div class="modal fade" id="FullScreenModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-align-center">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Please Enable Full Screen! To start test.</h1>
+     </div>
+      <div class="modal-body">
+        
+        <button type="button" class="btn " style="background-color: #39398f;color: white;" onclick="startTest()">Enter Full Screen</button>
+ 
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="FullScreenModalBg" class=" fade show"></div>
+
+<!-- <style>
+	.question-wrapper 
+	{
+			display: flex;
+			align-items: baseline;
+			
+	}
+	.question_text 
+	{
+		    max-width: 87%;
+			flex-grow: 1;
+			margin-left: 10px;
+			font-size: 17px;
+			font-weight: 500;
+		
+	}
+	.marks 
+	{
+		margin-left: auto;
+	}
+	body
+	{
+		background-image: linear-gradient(to left bottom, #4b4baf, #4e4eba, #5152c4, #5555cf, #5858da, #456ce9, #2d7ef5, #008fff, #00acff, #00c2f2, #00d3d1, #3ee0ae);
+    background-size:auto;
+
+	}
+	.option-box
+	{
+		margin-left:2rem;
+		margin-bottom: 1rem;
+	}
+	
+	input, textarea
+	{
+		border-color: rgb(133, 131, 131) !important;
+	}
+	.box
+	{
+		margin-bottom: 0.5rem;
+		background-color: white;
+		border-radius: 10px;
+		padding: 1rem;
+	}
+	.check
+	{
+	   
+	   height:1.3em !important;
+	   width: 1.3em !important;
+	   vertical-align: middle !important;
+	}
+	.container
+	{
+		width: 70%;
+		border-radius: 10px;
+		
+	}
+	</style> -->
+<style>
+    /* Style for quiz container */
+
+body{background: rgb(130, 106, 251);}
+.quiz-container {
+  max-width: 80%;
+  margin: 2rem auto 2rem auto;
+  border-radius: 8px;
+  background-color: #FFF;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  padding: 25px;
+}
+
+/* Style for question and option elements */
+.question {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.question_text
+{
+    word-break: break-all; 
+    hyphens: auto;
+    font-size: 17px;
+    color: rgb(66, 66, 66);
+}
+
+.option_group {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.option_group li {
+  margin-bottom: 10px;
+  width:60%;
+  /* border: 1px solid; */
+}
+
+.option_group label:hover
+{
+    border:2px solid rgb(130, 106, 251);
+}
+
+
+.option_group label {
+  display: flex;
+  border-radius: 10px;
+  padding: 5px;
+  padding-left: 15px;
+  background-color: rgb(236, 236, 236);
+  align-items: center;
+  cursor: pointer;
+  border:2px solid white;
+}
+
+.option_group input[type="radio"] {
+  margin-right: 10px;
+}
+
+.option_text {
+  font-size: 20px;
+}
+.form-check-input:checked {
+    background-color: rgb(130, 106, 251) !important;
+    border-color: rgb(130, 106, 251) !important;
+}
+
+
+
+.time_box
+{
+    background-color: rgb(103, 78, 225);
+    padding: 3px;
+    color: white;
+    font-size: 21px;
+    padding-left: 5px;
+    border-radius: 5px;
+}
+.time_box span
+{
+    background-color: white;
+    padding:0 10px 0 10px;
+    border-radius: 5px;
+   color: black;
+}
+.footer {
+  background-color: #262626;
+  color: #dfdfdf;
+  text-align: center;
+  padding: 10px 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer p {
+  margin: 0;
+}
+
+.navbar-container
+    {
+    width:100%;
+    background-color: #ffffff; 
+    
+
+    }
+    .nav-body
+    {
+        display:flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1% 2% 0 2%;
+    }
+
+    .nav-body ul li
+    {
+        list-style-type:none ;
+        display: inline-block;
+        padding: 3px 10px;  
+        margin-bottom: -10px;
+    }
+    .nav-body ul li a
+    { 
+        color: white;
+        text-decoration: none;
+    }
+    
+
+  
+
+/* Media query for smaller screens */
+@media only screen and (max-width: 600px) {
+  .question {
+    font-size: 20px;
+  }
+  
+  .option_text {
+    font-size: 18px;
+  }
+  
+  .submit-button {
+    font-size: 18px;
+    padding: 8px 16px;
+  }
+  .option_group li
+  {
+    width:90%;
+  }
+  .option_group label:hover
+  {border-color: white;}
+}
+
+</style>
+
+<script type="text/javascript">
+    
+
+  // Show the Bootstrap modal when the page is loaded
+  
+  function showModal()
+  {
+  var modal = document.getElementById('FullScreenModal');
+  modal.style.display = 'block';
+  modal.classList.add('show');
+  document.getElementById('FullScreenModalBg').classList.add('modal-backdrop');
+  document.querySelector('.quiz-container').style.visibility='collapse';
+  document.body.style.overflow = "hidden";
+
+}
+
+function hideModal()
+{
+  var modal = document.getElementById('FullScreenModal');
+  modal.style.display = '';
+  modal.classList.remove('show');
+  document.getElementById('FullScreenModalBg').classList.remove('modal-backdrop');
+  document.querySelector('.quiz-container').style.visibility='visible';
+  document.body.style.overflow = "auto";
+
+}
+  function startTest()
+  {
+    hideModal();
+    var element = document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen().catch(function(error) {
+        console.log('Failed to enter full screen:', error);
+      });
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen().catch(function(error) {
+        console.log('Failed to enter full screen:', error);
+      });
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen().catch(function(error) {
+        console.log('Failed to enter full screen:', error);
+      });
+    } else {
+      console.log('Full screen mode is not supported');
+    }
+    noclick_timer();
+    console.log("hello");}
+
+window.onload = function() 
+{
+  showModal();
+}
+
+function noclick_timer()
+{  
+	var duration = {{ time }};
+	var timer = document.getElementById('timer');
+	var form = document.getElementById('quiz-form');
+  	var submitBtn = document.getElementById('submit-btn');
+	var intervalId = setInterval(function() {
+		duration--;
+		if (duration <= 0) {
+			clearInterval(intervalId);
+			document.getElementById('quiz-form').submit();
+		}
+		var hours = Math.floor(duration / 3600);
+		var minutes = Math.floor((duration % 3600) / 60);
+		var seconds = duration % 60;
+		timer.innerHTML = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+	    if (duration== 0) 
+		{    
+      
+  			submitBtn.disabled = true;
+ 			    form.submit();  
+    		    submitQuizForm();
+    		clearInterval(timer);
+	    }
+	}, 1000);
+ 
+
+    // Disable copy/paste
+    document.addEventListener("copy", function(e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener("cut", function(e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener("paste", function(e) {
+      e.preventDefault();
+    });
+    document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.keyCode == 80) { // Ctrl+P
+    event.preventDefault();
+    }
+    });
+
+    // Disable right-click
+    // document.addEventListener("contextmenu", function(e) {
+    //   e.preventDefault();
+    // });
+
+}
+
+</script>
+
+{%endblock%}
